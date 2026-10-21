@@ -12,16 +12,14 @@ import time
 
 URL = "https://leecontract-crypto.github.io/sticky-notes/?float"
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
-CLOSED_W, CLOSED_H = 44, 140       # collapsed: just the arrow tab
+CLOSED_W, CLOSED_H = 230, 140      # collapsed window size (Edge enforces a minimum width)
+STRIP_W = 44                       # how much of it peeks in from the screen edge
 OPEN_W = 390                       # expanded: panel (340) + tab
 
 user32 = ctypes.windll.user32
-gdi32 = ctypes.windll.gdi32
 user32.SetProcessDPIAware()
 user32.SetWindowPos.argtypes = [wt.HWND, wt.HWND, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, wt.UINT]
 user32.SetWindowPos.restype = wt.BOOL
-user32.SetWindowRgn.argtypes = [wt.HWND, wt.HANDLE, wt.BOOL]
-gdi32.CreateRectRgn.restype = wt.HANDLE
 HWND_TOPMOST = wt.HWND(-1)
 SWP_SHOWWINDOW = 0x0040
 SPI_GETWORKAREA = 0x0030
@@ -51,20 +49,16 @@ def find_window():
 
 
 def place(hwnd, is_open):
+    """Expanded: full-height panel at the right edge. Collapsed: the window is parked
+    mostly off the right-hand edge of the desktop so only the arrow strip shows
+    (Edge won't make an app window narrower than ~222px, so we can't just shrink it)."""
     l, t, r, b = work_area()
+    vright = user32.GetSystemMetrics(76) + user32.GetSystemMetrics(78)  # right edge of virtual desktop
     if is_open:
-        w, h, y = OPEN_W, b - t, t
+        user32.SetWindowPos(hwnd, HWND_TOPMOST, vright - OPEN_W, t, OPEN_W, b - t, SWP_SHOWWINDOW)
     else:
-        w, h, y = CLOSED_W, CLOSED_H, t + (b - t - CLOSED_H) // 2
-    user32.SetWindowRgn(hwnd, None, True)
-    user32.SetWindowPos(hwnd, HWND_TOPMOST, r - w, y, w, h, SWP_SHOWWINDOW)
-    # Edge won't shrink an app window below ~222px, so clip it to just the strip we want.
-    rc = wt.RECT()
-    user32.GetWindowRect(hwnd, ctypes.byref(rc))
-    aw, ah = rc.right - rc.left, rc.bottom - rc.top
-    if aw > w or ah > h:
-        user32.SetWindowPos(hwnd, HWND_TOPMOST, r - aw, y, aw, ah, SWP_SHOWWINDOW)
-        user32.SetWindowRgn(hwnd, gdi32.CreateRectRgn(aw - w, 0, aw, h), True)
+        y = t + (b - t - CLOSED_H) // 2
+        user32.SetWindowPos(hwnd, HWND_TOPMOST, vright - STRIP_W, y, CLOSED_W, CLOSED_H, SWP_SHOWWINDOW)
 
 
 def main():
