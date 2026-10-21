@@ -14,7 +14,7 @@ URL = "https://leecontract-crypto.github.io/sticky-notes/?float"
 EDGE = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 CLOSED_W, CLOSED_H = 230, 140      # collapsed window size (Edge enforces a minimum width)
 STRIP_W = 44                       # how much of it peeks in from the screen edge
-OPEN_W = 390                       # expanded: panel (340) + tab
+OPEN_W = 400                       # expanded: panel (340) + tab
 
 user32 = ctypes.windll.user32
 user32.SetProcessDPIAware()
@@ -53,12 +53,15 @@ def place(hwnd, is_open):
     mostly off the right-hand edge of the desktop so only the arrow strip shows
     (Edge won't make an app window narrower than ~222px, so we can't just shrink it)."""
     l, t, r, b = work_area()
+    sc = (user32.GetDpiForWindow(hwnd) or 96) / 96   # sizes below are in CSS pixels
+    open_w, strip_w = int(OPEN_W * sc), int(STRIP_W * sc)
+    closed_w, closed_h = int(CLOSED_W * sc), int(CLOSED_H * sc)
     vright = user32.GetSystemMetrics(76) + user32.GetSystemMetrics(78)  # right edge of virtual desktop
     if is_open:
-        user32.SetWindowPos(hwnd, HWND_TOPMOST, vright - OPEN_W, t, OPEN_W, b - t, SWP_SHOWWINDOW)
+        user32.SetWindowPos(hwnd, HWND_TOPMOST, vright - open_w, t, open_w, b - t, SWP_SHOWWINDOW)
     else:
-        y = t + (b - t - CLOSED_H) // 2
-        user32.SetWindowPos(hwnd, HWND_TOPMOST, vright - STRIP_W, y, CLOSED_W, CLOSED_H, SWP_SHOWWINDOW)
+        y = t + (b - t - closed_h) // 2
+        user32.SetWindowPos(hwnd, HWND_TOPMOST, vright - strip_w, y, closed_w, closed_h, SWP_SHOWWINDOW)
 
 
 def main():
