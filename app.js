@@ -72,7 +72,9 @@ if (!firebaseConfig.apiKey) {
   };
 
   // Dictation where the browser supports it; otherwise use the keyboard's mic button.
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  // iOS's built-in speech API crashes in home-screen apps, so iPhones/iPads use the keyboard mic.
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const SR = isIOS ? null : (window.SpeechRecognition || window.webkitSpeechRecognition);
   if (!SR) {
     $('mic').title = "Use your keyboard's mic button to dictate";
     $('mic').onclick = () => $('new-body').focus();
