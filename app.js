@@ -10,10 +10,13 @@ if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catc
 const setOpen = o => {
   document.body.classList.toggle('open', o);
   $('tab').innerHTML = o ? '&#9654;' : '&#9664;';
+  // The desktop launcher (float/float.py) reads the window title to resize the floating window.
+  document.title = o ? 'Sticky Notes [open]' : 'Sticky Notes [closed]';
   try { localStorage.open = o ? 1 : 0; } catch {}
 };
+if (new URLSearchParams(location.search).has('float')) document.body.classList.add('float');
 $('tab').onclick = () => setOpen(!document.body.classList.contains('open'));
-try { setOpen(localStorage.open === '1'); } catch {}
+try { setOpen(!document.body.classList.contains('float') && localStorage.open === '1'); } catch { setOpen(false); }
 
 if (!firebaseConfig.apiKey) {
   $('signin').hidden = false; $('cfgmsg').hidden = false; $('signin-btn').hidden = true;
