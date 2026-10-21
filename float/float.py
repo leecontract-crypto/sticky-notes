@@ -16,8 +16,13 @@ CLOSED_W, CLOSED_H = 44, 140       # collapsed: just the arrow tab
 OPEN_W = 390                       # expanded: panel (340) + tab
 
 user32 = ctypes.windll.user32
+gdi32 = ctypes.windll.gdi32
 user32.SetProcessDPIAware()
-HWND_TOPMOST = -1
+user32.SetWindowPos.argtypes = [wt.HWND, wt.HWND, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, wt.UINT]
+user32.SetWindowPos.restype = wt.BOOL
+user32.SetWindowRgn.argtypes = [wt.HWND, wt.HANDLE, wt.BOOL]
+gdi32.CreateRectRgn.restype = wt.HANDLE
+HWND_TOPMOST = wt.HWND(-1)
 SWP_SHOWWINDOW = 0x0040
 SPI_GETWORKAREA = 0x0030
 
@@ -51,7 +56,15 @@ def place(hwnd, is_open):
         w, h, y = OPEN_W, b - t, t
     else:
         w, h, y = CLOSED_W, CLOSED_H, t + (b - t - CLOSED_H) // 2
+    user32.SetWindowRgn(hwnd, None, True)
     user32.SetWindowPos(hwnd, HWND_TOPMOST, r - w, y, w, h, SWP_SHOWWINDOW)
+    # Edge won't shrink an app window below ~222px, so clip it to just the strip we want.
+    rc = wt.RECT()
+    user32.GetWindowRect(hwnd, ctypes.byref(rc))
+    aw, ah = rc.right - rc.left, rc.bottom - rc.top
+    if aw > w or ah > h:
+        user32.SetWindowPos(hwnd, HWND_TOPMOST, r - aw, y, aw, ah, SWP_SHOWWINDOW)
+        user32.SetWindowRgn(hwnd, gdi32.CreateRectRgn(aw - w, 0, aw, h), True)
 
 
 def main():

@@ -23,6 +23,6 @@ body.open #tab{right:min(340px,100%)}
 #signout{margin-top:1rem;font-size:.8rem;border:0;background:none;color:#666;text-decoration:underline}
 /* floating desktop window (see float/): collapsed = just the arrow tab */
 body.float{background:#fdd835;overflow:hidden}
-body.float #tab{top:0;height:100%;border-radius:0;box-shadow:none;width:100%;right:0;padding:0}
+body.float #tab{top:0;height:100%;border-radius:0;box-shadow:none;width:44px;right:0;padding:0}
 body.float.open #tab{right:min(340px,100%);width:auto;padding:1.2rem .5rem}
 body.float #panel{box-shadow:none}
