@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sticky Notes</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#fff176">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="signin" hidden>
+  <h1>Sticky Notes</h1>
+  <p id="cfgmsg" hidden>Firebase isn't set up yet. See SETUP.md.</p>
+  <button id="signin-btn">Sign in with Google</button>
+</div>
+
+<div id="app" hidden>
+  <button id="tab" aria-label="Show notes">&#9664;</button>
+  <aside id="panel">
+    <form id="add">
+      <input id="new-title" placeholder="Who / what is it about?" autocomplete="off">
+      <div class="row">
+        <textarea id="new-body" rows="2" placeholder="Note..."></textarea>
+        <button type="button" id="mic" title="Dictate">&#127908;</button>
+      </div>
+      <button type="submit" id="add-btn">Add note</button>
+    </form>
+    <div id="notes"></div>
+    <h3 id="paused-h" hidden>Paused</h3>
+    <div id="paused"></div>
+    <button id="signout">Sign out</button>
+  </aside>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe Print","Comic Sans MS",system-ui,sans-serif;background:#f5f5f0;min-height:100vh}
+[hidden]{display:none!important}
+#signin{text-align:center;padding:4rem 1rem}
+button{font:inherit;cursor:pointer}
+#tab{position:fixed;right:0;top:40%;z-index:10;border:0;background:#fdd835;padding:1.2rem .5rem;border-radius:10px 0 0 10px;box-shadow:-2px 2px 6px #0003;font-size:1.1rem;transition:right .25s}
+#panel{position:fixed;top:0;right:0;height:100%;width:min(340px,100%);background:#fffde7;box-shadow:-4px 0 12px #0004;padding:12px;overflow-y:auto;transform:translateX(100%);transition:transform .25s;z-index:9}
+body.open #panel{transform:none}
+body.open #tab{right:min(340px,100%)}
+#add input,#add textarea{width:100%;padding:6px;border:1px solid #d4c84a;background:#fff;font:inherit;border-radius:4px;margin-bottom:6px}
+#add .row{display:flex;gap:6px}
+#add .row textarea{flex:1;margin:0}
+#mic{border:1px solid #d4c84a;background:#fff;border-radius:4px;width:42px}
+#mic.on{background:#ef5350}
+#add-btn{margin:6px 0 12px;width:100%;padding:6px;border:0;background:#fdd835;border-radius:4px}
+.note{background:#fff176;box-shadow:2px 3px 6px #0003;padding:8px 10px;margin-bottom:12px;border-radius:2px;position:relative}
+.note h4{margin:0 70px 4px 0;word-break:break-word}
+.note p{margin:0;white-space:pre-wrap;word-break:break-word}
+.note .btns{position:absolute;top:4px;right:4px;display:flex;gap:4px}
+.note .btns button{border:0;background:#fff9;border-radius:4px;width:30px;height:30px}
+.note.paused{background:#fff59d;opacity:.8;padding:4px 10px}
+.note.paused h4{margin:0 70px 0 0}
+#signout{margin-top:1rem;font-size:.8rem;border:0;background:none;color:#666;text-decoration:underline}
