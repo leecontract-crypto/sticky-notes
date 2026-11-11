@@ -42,13 +42,39 @@ if (!firebaseConfig.apiKey) {
   });
 
   function render(notes) {
+    lastNotes = notes;
+    if (editing && !notes.some(n => n.id === editing.id)) editing = null;   // note was deleted elsewhere
     $('notes').replaceChildren(...notes.filter(n => !n.paused).map(card));
     const p = notes.filter(n => n.paused);
     $('paused-h').hidden = !p.length;
     $('paused').replaceChildren(...p.map(card));
   }
 
+  // Note being edited on this device (kept here so a sync update doesn't wipe what's being typed).
+  let editing = null, lastNotes = [];
+  const rerender = () => render(lastNotes);
+
+  function editCard(n) {
+    const el = document.createElement('form'); el.className = 'note editing';
+    const t = document.createElement('input'); t.value = editing.title; t.placeholder = 'Who / what is it about?';
+    const b = document.createElement('textarea'); b.value = editing.body; b.rows = 3; b.placeholder = 'Note...';
+    t.oninput = () => { editing.title = t.value; };
+    b.oninput = () => { editing.body = b.value; };
+    const save = document.createElement('button'); save.type = 'submit'; save.textContent = 'Save';
+    const cancel = document.createElement('button'); cancel.type = 'button'; cancel.textContent = 'Cancel';
+    cancel.onclick = () => { editing = null; rerender(); };
+    el.onsubmit = e => {
+      e.preventDefault();
+      updateDoc(doc(notesCol, n.id), { title: editing.title.trim(), body: editing.body.trim() });
+      editing = null; rerender();
+    };
+    const row = document.createElement('div'); row.className = 'edit-btns'; row.append(save, cancel);
+    el.append(t, b, row);
+    return el;
+  }
+
   function card(n) {
+    if (editing && editing.id === n.id) return editCard(n);
     const el = document.createElement('div');
     el.className = 'note' + (n.paused ? ' paused' : '');
     const h = document.createElement('h4'); h.textContent = n.title || '(no title)';
@@ -62,7 +88,10 @@ if (!firebaseConfig.apiKey) {
     const done = document.createElement('button');
     done.textContent = '✓'; done.title = 'Done (deletes)';
     done.onclick = () => deleteDoc(doc(notesCol, n.id));
-    b.append(pause, done); el.append(b);
+    const edit = document.createElement('button');
+    edit.textContent = '✎'; edit.title = 'Edit';
+    edit.onclick = () => { editing = { id: n.id, title: n.title || '', body: n.body || '' }; rerender(); };
+    b.append(edit, pause, done); el.append(b);
     return el;
   }
 

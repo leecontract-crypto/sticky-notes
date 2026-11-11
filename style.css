@@ -14,15 +14,19 @@ body.open #tab{right:min(340px,100%)}
 #mic.on{background:#ef5350}
 #add-btn{margin:6px 0 12px;width:100%;padding:6px;border:0;background:#fdd835;border-radius:4px}
 .note{background:#fff176;box-shadow:2px 3px 6px #0003;padding:8px 10px;margin-bottom:12px;border-radius:2px;position:relative}
-.note h4{margin:0 70px 4px 0;word-break:break-word}
+.note h4{margin:0 104px 4px 0;word-break:break-word}
 .note p{margin:0;white-space:pre-wrap;word-break:break-word}
 .note .btns{position:absolute;top:4px;right:4px;display:flex;gap:4px}
 .note .btns button{border:0;background:#fff9;border-radius:4px;width:30px;height:30px}
 .note.paused{background:#fff59d;opacity:.8;padding:4px 10px}
-.note.paused h4{margin:0 70px 0 0}
+.note.paused h4{margin:0 104px 0 0}
 #signout{margin-top:1rem;font-size:.8rem;border:0;background:none;color:#666;text-decoration:underline}
 /* floating desktop window (see float/): collapsed = just the arrow tab */
 body.float{background:#fdd835;overflow:hidden}
 body.float #tab{top:0;height:100%;border-radius:0;box-shadow:none;width:44px;left:0;right:auto;padding:0 0 0 4px;text-align:left;font-size:1.6rem;color:#000}
 body.float.open #tab{left:auto;right:min(340px,100%);top:40%;height:auto;width:auto;padding:1.2rem .5rem;border-radius:10px 0 0 10px}
 body.float #panel{box-shadow:none}
+/* editing a note in place */
+.note.editing input,.note.editing textarea{width:100%;padding:6px;border:1px solid #d4c84a;background:#fff;font:inherit;border-radius:4px;margin-bottom:6px}
+.edit-btns{display:flex;gap:8px}
+.edit-btns button{flex:1;padding:6px;border:0;background:#fdd835;border-radius:4px}
